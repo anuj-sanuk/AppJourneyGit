@@ -1,0 +1,52 @@
+<!--
+Author: Darshan S Almiya
+Company: Coforge
+Description: Convert the Aura component to LWC,
+            Rendering of based on the Picklist list value for particuler object
+Attributes: Sales path
+input: Pass the Object Name and Picklist field Name
+
+Event Handlers: getSectionState - Makeing the salespath compoleted or not with the help of section question response
+                getHardStop - Enable and disable Last(DIP) tab for Error
+History
+Date            Authors Name           Brief Description of Change
+30-12-2021      Darshan S Almiya        
+-->
+<template>
+    <lightning-card>
+        <div class="slds-path">
+            <div class="slds-grid slds-path__track">
+                <div class="slds-grid slds-path__scroller-container">
+                    <div class="slds-path__scroller">
+                        <div class="slds-path__scroller_inner">
+                            <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
+                                <template for:each={objWrappedPathValues} for:item="item" for:index="index">
+                                    <li class = "{item.strActive}" key={item} role="presentation" > <!-- + {item.strActive} -->
+                                    <a class="slds-path__link" title ={item.strPickValue}
+                                        role="option" tabindex="-1"  onclick = {handlePathClick} data-index={index}>
+                                        <span class="slds-path__stage" data-index={index} style="margin-left:50px;"></span> 
+                                        <span data-index={index}>
+                                            {item.strPickValue} &nbsp;
+                                            <template if:true={item.isCheck}>
+                                                <lightning-icon size="x-small" icon-name="utility:check" class="slds-icon slds-icon_x-small IconColor"></lightning-icon>
+                                            </template>
+                                            <template if:true={item.isHardStop}>
+                                                <lightning-icon size="x-small" icon-name="utility:lock" class="slds-icon  slds-icon_x-small IconColor"></lightning-icon>
+                                            </template>
+                                        </span>
+                                    </a>
+                                        
+                                </li>
+                                </template>     
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <c-set-up-page-sections-accordion-cmp str-path-name={strSelectedPathVal} onsectionvaluechange={getSectionState} onhardstopeventvaluechanges={getHardStop}> 
+            </c-set-up-page-sections-accordion-cmp>
+        
+    </lightning-card>
+    
+</template>

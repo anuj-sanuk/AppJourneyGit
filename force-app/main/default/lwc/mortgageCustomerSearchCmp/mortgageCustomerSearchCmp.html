@@ -1,0 +1,74 @@
+<!--
+Author: Alekya Avadutha
+Company: Coforge
+Description: Customer search basis on LastName Postcode and Date ofBirth.
+Attributes: LastName,DateOfBirth and PostCode
+objectType – Account
+
+Event Handlers: lastNameValue - To record the values of lastName field
+                handleChange - To record the values of dateOfBirth and postCode field
+                handleSearch - Search for a Customer.
+                handleReset - TO reset the input fields
+
+History
+Date            Authors Name        Brief Description of Change
+30-11-2021      Alekya Avadutha          Initial Draft
+-->
+<template>
+    <form>
+        <lightning-card variant="Narrow" title=" Customer Search" icon-name="standard:search">
+            <div class="c-container">
+                <div class="slds-card">
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            <p></p>
+                        </h2>
+                    </div>
+                    <div class="slds-p-bottom_x-large">
+                        <lightning-input type="text" label="Last Name" name="lastName" required=""
+                            onchange={handleLastNameChange} value={lastName}
+                            class=" slds-m-left_small slds-m-right_small  lastName">
+                        </lightning-input>
+                        <br />
+                        <span class="style">
+                            <span style="color:red">*</span>AND/OR
+                        </span>
+                        <div class=" slds-grid ">
+                            <div class="slds-col  ">
+                                <span>
+                                    <lightning-input type="date" label="Date of Birth" name="dateOfBirth"
+                                        onchange={handleDOBChange} field-level-help="Date of Birth" value=''
+                                        class=" slds-m-left_small  slds-p-right_x-small dateOfBirth ">
+                                    </lightning-input>
+                                </span>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 ">
+                                <span>
+                                    <lightning-input type="text" label="Post Code" name="postCode"
+                                        onchange={handlePostCodeChange} field-level-help="Post Code" value=''
+                                        class=" slds-m-right_small  postCode ">
+                                    </lightning-input>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div slot="footer">
+                <div class="slds-p-bottom_large slds-m-bottom_medium">
+                    <lightning-button class=" slds-float_right slds-m-right_xx-small " label="Search"
+                        variant="Destructive" onclick={handleSearch}>
+                    </lightning-button>
+
+                    <template if:false={buttonDisabled}>
+                        <lightning-button class=" slds-float_right slds-m-right_medium" label="Clear"
+                            title="Non-primary action" onclick={handleReset}>
+                        </lightning-button>
+                    </template>
+
+                </div>
+            </div>
+        </lightning-card>
+    </form>
+</template>

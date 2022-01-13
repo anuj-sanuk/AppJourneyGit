@@ -1,0 +1,13 @@
+<!--
+Author: Sathvik Voola
+Company: Coforge
+Description:A design attribute to select the picklist value based on the object placed
+History
+Date            Authors Name        Brief Description of Change
+18-11-2021      Sathvik Voola       Initial Draft
+-->
+<design:component>
+    <!-- This design attribute helps to slect the picklist api name depending on the object record page where
+   		 the component is placed -->
+    <design:attribute name="strCurrentObjPickVal" label="PickList API Name" datasource="apex://FieldPathPickLists_CC" required="true"/>
+</design:component>

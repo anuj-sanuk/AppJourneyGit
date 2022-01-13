@@ -1,0 +1,4 @@
+:host{
+    --sds-c-tabs-item-color-border-active: red;
+    --sds-c-tabs-item-color-border-hover: red;
+    }

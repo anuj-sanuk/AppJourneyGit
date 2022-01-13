@@ -1,0 +1,16 @@
+/*adjusting help text position*/
+.this.customIcon {
+    vertical-align: top !important;
+}
+ 
+.customIcon {
+    vertical-align: top !important;
+}
+
+.errorClass{
+    color:red;
+    white-space: pre;
+}
+.inputWidth{
+    width: 25%;
+}

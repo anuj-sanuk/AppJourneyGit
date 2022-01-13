@@ -1,0 +1,18 @@
+.colour {
+    color: red;
+}
+.color {
+    text-decoration: red;
+}
+lightning-button.button {
+    --sds-c-button-text-color: red;;
+}
+.text {
+    font-black: bold;
+   }
+.whiteColor{
+    color: white;
+}
+.redColor{
+    color:red;
+}

@@ -1,0 +1,57 @@
+<!--
+Author: Sathvik Voola
+Company: Coforge
+Description: Customer search basis on F Number and Application Number.
+Attributes: F Number & Mortgage Application Number
+objectType – Account & Residential Loan Application
+
+Event Handlers: handleApplicationNumberDisabled - Disbaled F NUmber Number input field on basis of Application Number field
+                handleFNumberDisabled- Disbaled Application Number input field on basis of F NUmber field
+                handleSearch - Search Application & Customer Details.
+                handleReset - TO reset the input fields
+
+History
+Date            Authors Name        Brief Description of Change
+02-11-2021      Sathvik Voola       Initial Draft
+-->
+
+<template>
+    <form>
+        <lightning-card variant="Narrow" title="Search" icon-name="standard:search">
+            <div class="c-container">
+                <div class="slds-card">
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            <p></p>
+
+                        </h2>
+                    </div>
+
+                    <lightning-input type="text" label="F-Number" name="fNumber" onchange={handleFNumberDisabled}
+                        value={fNumberValue} disabled={fNumberfieldDisabled} max-length={label.fNumberMaxLength}
+                        class="slds-m-around_medium fNumber">
+                    </lightning-input>
+
+                    <lightning-input type="text" label="Mortgage Application Number" name="applicationNumber"
+                         onchange={handleApplicationNumberDisabled} value={applicationNumberValue}
+                        max-length={label.applicationNumLength} disabled={appNumberfieldDisabled}
+                        class="slds-m-around_medium applicationNumber">
+                   </lightning-input>
+                </div>
+            </div>
+            <div slot="footer">
+                <div class="slds-p-bottom_large slds-m-bottom_medium">
+                    <lightning-button class=" slds-float_right slds-m-right_xx-small " label="Search"
+                        variant="Destructive" onclick={handleSearch}>
+                    </lightning-button>
+
+                    <template if:false={buttonDisabled}>
+                        <lightning-button class=" slds-float_right slds-m-right_medium" label="Clear"
+                            title="Non-primary action" onclick={handleReset}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+        </lightning-card>
+    </form>
+</template>

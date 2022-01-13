@@ -1,0 +1,71 @@
+<!--
+Author: Alekya Avadutha
+Company: Coforge
+Description: 
+Attributes: 
+objectType – 
+
+Event Handlers: 
+
+History
+Date            Authors Name        Brief Description of Change
+30-11-2021      Alekya Avadutha          Initial Draft
+-->
+<template>
+    <form>
+        <lightning-card variant="Narrow" title=" Customer Search" icon-name="standard:search">
+            <div class="c-container">
+                <div class="slds-card">
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            <p></p>
+                        </h2>
+                    </div>
+                    <div class="slds-p-bottom_x-large">
+                        <lightning-input type="text" label="Last Name" name="lastName" required
+                            onchange={lastNameValue} value={lastName}
+                            class=" slds-m-left_small slds-m-right_small  lastName">
+                        </lightning-input>
+                        <br />
+                        <span class="style">
+                            <span style="color:red">*</span>AND/OR
+                        </span>
+                        <div class=" slds-grid ">
+                            <div class="slds-col  ">
+                                <span>
+                                    <lightning-input type="date" label="Date of Birth" name="dateOfBirth"
+                                        onchange={dateOfBirthValue} field-level-help="temperory" value={dateOfBirth}
+                                        class=" slds-m-left_small  slds-p-right_xx-small dateOfBirth">
+                                    </lightning-input>
+                                </span>
+                            </div>
+                            <div class="slds-col  ">
+                                <span>
+                                    <lightning-input type="number" label="Post Code" name="postCode"
+                                        onchange={postCodeValue} field-level-help="temperorey" value={postCode}
+                                        class=" slds-m-right_small  postCode">
+                                    </lightning-input>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div slot="footer">
+                <div class="slds-p-bottom_large slds-m-bottom_medium">
+                    <lightning-button class=" slds-float_right slds-m-right_xx-small " label="Search"
+                        variant="Destructive" onclick={handleSearch}>
+                    </lightning-button>
+
+                    <template if:false={buttonDisabled}>
+                        <lightning-button class=" slds-float_right slds-m-right_medium" label="Clear"
+                            title="Non-primary action" onclick={handleReset}>
+                        </lightning-button>
+                    </template>
+
+                </div>
+            </div>
+        </lightning-card>
+    </form>
+</template>

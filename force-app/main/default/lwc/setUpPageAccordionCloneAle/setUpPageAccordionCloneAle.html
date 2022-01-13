@@ -1,0 +1,71 @@
+<!--
+Author: Shirisha
+Company: Coforge
+Description: to display the sections on basis of setup property
+Attributes: salespath
+objectType – setupsectionsmetada
+
+Event Handlers: 
+               
+History
+Date            Authors Name        Brief Description of Change
+19-11-2021      shirisha naga     Initial Draft
+-->
+<template>
+        <lightning-card>
+                <lightning-tabset if:true={strPathName} class='tab-view'>
+                        <lightning-tab label={strPathName} class='tab-view'> </lightning-tab>
+                        <lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
+                                <table class="slds-table  slds-table_bordered ">
+                                        <tbody>
+                                                <template for:each={MasterLabelRecords} for:item="rec"
+                                                        for:index="indexVar">
+                                                        <tr key={rec.Id} class="slds-hint-parent">
+                                                                <td class="slds-size_1-of-12">
+                                                                        <div>
+
+
+
+                                                                                <lightning-accordion-section
+                                                                                        name={rec.strSection}
+                                                                                        label={rec.strSection}
+                                                                                        class="slds-visible"
+                                                                                        onclick={getSelectedAccordion}
+                                                                                        id={rec.Id}>
+
+
+                                                                                        <template
+                                                                                                if:true={rec.isComplete}>
+
+                                                                                                <lightning-button-icon
+                                                                                                        slot="actions"
+                                                                                                        icon-name="utility:check"
+                                                                                                        alternative-text="Add user"
+                                                                                                        class="slds-m-right_xx-small"
+                                                                                                        title="Add user">
+                                                                                                </lightning-button-icon>
+
+                                                                                        </template>
+
+                                                                                        <c-questionnaire-cmp-clone-anuj
+                                                                                                onupdatesectionstatus={handleUpdateSectionStatus}
+                                                                                                str-sales-path={strPathName}
+                                                                                                str-section-name={rec.strSection}
+                                                                                                str-application-json={questionnaireQueryJSON}>
+                                                                                        </c-questionnaire-cmp-clone-anuj>
+
+                                                                                </lightning-accordion-section>
+
+
+
+                                                                        </div>
+                                                                </td>
+
+                                                        </tr>
+                                                </template>
+                                        </tbody>
+                                </table>
+                        </lightning-accordion>
+                </lightning-tabset>
+        </lightning-card>
+</template>

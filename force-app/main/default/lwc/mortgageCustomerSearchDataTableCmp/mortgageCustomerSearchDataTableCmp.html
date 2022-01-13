@@ -1,0 +1,58 @@
+<!--
+Author: Shirisha Naga
+Company: Coforge
+Description: Customer search basis on LastName and BirthDate or PostalCode.
+Attributes: LastName & Birthdate
+objectType – Account 
+
+Event Handlers:  sortColumns -Resorting the coloumns, Ascending and desending
+
+History
+Date            Authors Name        Brief Description of Change
+30-11-2021        Initial Draft
+-->
+<template>
+    <template if:true={showTable}>
+        <template if:true={errorMessage}>
+            <lightning-card title={errorMessage} icon-name="standard:avatar">
+
+            </lightning-card>
+        </template>
+        <template if:false={errorMessage}>
+            <lightning-card title={Heading} icon-name="standard:avatar">
+                <div class="slds-m-around_medium">
+                    <template if:true={isDataAvailable}>
+                        <lightning-datatable key-field="Id" data={data} columns={columns} sorted-by={sortedBy}
+                            sorted-direction={sortedDirection} onsort={sortColumns}
+                            default-sort-direction={defaultSortDirection} hide-checkbox-column>
+                        </lightning-datatable>
+                    </template>
+                </br>
+                    <template if:true={isPageVisible}>
+                        <lightning-layout horizontal-align="space">
+                            <lightning-layout-item flexibility="auto">
+                                <u class={underlineClassPrevious}>
+                                    <lightning-button variant="base" class="disabled-lightning-prevbutton button"
+                                        label="Previous" disabled onclick={previousHandler}>
+                                    </lightning-button>
+                                </u>
+                            </lightning-layout-item>
+                            <lightning-layout-item flexibility="auto">
+                                Showing records {startingRecord} - {endingRecord} of {totalRecountCount}
+                            </lightning-layout-item>
+                            <lightning-layout-item flexibility="auto">
+                                <div class="colour">
+                                    <u class={underlineClass}>
+                                        <lightning-button variant="base" label="Next"
+                                            class="disabled-lightning-nextbutton button" disabled onclick={nextHandler}>
+                                        </lightning-button>
+                                    </u>
+                                </div>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </template> 
+                </div>
+            </lightning-card>
+        </template>
+    </template>
+</template>

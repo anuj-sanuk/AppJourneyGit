@@ -1,0 +1,71 @@
+<!--
+Author: Darshan S Almiya
+Company: Coforge
+Description: Rendering of questions based of Questionnaire additional Dynmic logic
+objectType – Questionnaire
+
+Event Handlers: strResponseValue - to get Age field Value from questionnaireCmp
+
+History
+Date            Authors Name           Brief Description of Change
+02-11-2021      Darshan S Almiya       Initial Draft
+-->
+
+<template>
+
+    <div class="slds-grid slds-wrap">
+        <template if:true={lstAgesCount}>
+            <div class="slds-var-p-around_medium slds-col slds-size_1-of-1">
+                <label class="slds-form-element__label">{strAges}</label>
+                <template if:true={strAgesHelpText}>
+                    <lightning-helptext content={strAgesHelpText}>
+                    </lightning-helptext>
+                </template>
+            </div>
+        <template for:each={lstAgesCount} for:item="ageCount" for:index="index">
+            <template for:each={lstAddQuestions} for:item='questionnaire' for:index="indexInner">
+                <template if:true={questionnaire.isNumber}>
+                    <div key={objNoOfField} class="slds-var-p-around_medium slds-col slds-size_1-of-5">
+                    <lightning-input type="number" key={ageCount} name={questionnaire.strFieldName}
+                        data-id={indexInner} data-index={index} variant="label-hidden"
+                        label={questionnaire.strQuestion} onchange={handleAge}></lightning-input>
+                        </div>
+                </template>
+            </template>
+        </template>
+        </template>
+    </div>
+
+    <div class="slds-grid slds-wrap">
+        
+        <template for:each={lstLoanPartCount} for:item="item" for:index="index">
+            <div key={item} class="slds-col slds-size_12-of-12 ">Loan Part {item}</div>
+            
+            <template for:each={lstAddQuestions} for:item='questionnaire' for:index="indexInner">
+                
+                <div class="slds-var-p-around_medium slds-col slds-size_1-of-5" key={item}>
+                    
+                    <template if:true={questionnaire.isComboBox}>
+                        <lightning-combobox name={questionnaire.strFieldName} data-id={indexInner}
+                            data-index={index}  label={questionnaire.strQuestion} value=""
+                            placeholder="" options={questionnaire.lstOptions} onchange={handleCombobox}>
+                        </lightning-combobox>
+                    </template>
+
+                    <template if:true={questionnaire.isCurrency}>
+                        <lightning-input type="number" name={questionnaire.strFieldName}
+                            data-id={indexInner} data-index={index} 
+                            label={questionnaire.strQuestion} onchange={handleCurrency}></lightning-input>
+                    </template>
+
+                    <template if:true={questionnaire.isNumber}>
+                        <lightning-input type="number" name={questionnaire.strFieldName}
+                            data-id={indexInner} data-index={index}
+                            label={questionnaire.strQuestion} onchange={handleNumber}></lightning-input>
+                    </template>
+                </div>
+            </template>
+        </template>
+    </div>
+
+</template>

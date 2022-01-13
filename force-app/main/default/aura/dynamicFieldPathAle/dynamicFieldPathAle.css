@@ -1,0 +1,44 @@
+.THIS .IconColor  svg{
+    fill : white;
+}
+
+.THIS .slds-path__nav .slds-is-active{
+    background :none !important;
+}
+.THIS .slds-path__nav .Test:before {
+    background-color: green !important; 
+}
+.THIS .slds-path__nav .Test:after {
+    background-color: green !important; 
+}
+.THIS .slds-path__nav .Test .slds-path__link {
+    color: white !important;
+}
+.THIS .slds-path__nav .HardStop:before {
+    background-color: red !important;
+    pointer-events: none !important;
+}
+.THIS .slds-path__nav .HardStop:after {
+    background-color: red !important; 
+    pointer-events: none !important;
+}
+.THIS .slds-path__nav .HardStop .slds-path__link {
+    color: white !important;
+    pointer-events: none !important;
+}
+.THIS .slds-path__nav .HardStopAsh:before {
+    
+    background-color: rgb(236, 235, 234) !important;
+    
+    
+}
+.THIS .slds-path__nav .HardStopAsh:after {
+   
+    background-color: rgb(236, 235, 234) !important;
+    
+    
+}
+.THIS .slds-path__nav .HardStopAsh .slds-path__link {
+    color: black !important;
+         
+}

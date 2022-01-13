@@ -1,0 +1,16 @@
+.slds-tabs_default__nav {
+    border-bottom-style: none;
+}
+.slds-m-left_xx-small {
+    display : none !important;
+}
+
+.slds-show{
+    display: none;
+}
+
+
+:host{
+--sds-c-tabs-item-color-border-active: red;
+--sds-c-tabs-item-color-border-hover: red;
+}

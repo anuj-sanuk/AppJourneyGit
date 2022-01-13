@@ -1,0 +1,76 @@
+<!--
+Author: Sathvik Voola
+Company: Coforge
+Description: A dynamic field path on the object record page depending on the selected picklist
+Attributes: Current Object Api Name, Select picklist API Name
+objectType – All standard and Custom objects
+
+Event Handlers: handlePathClick - to handle the changed selected field path value
+				doInit          - load the field path by initialising the values during component load
+				getSectionState - This handles the behaviour of the path depending on the child components state
+
+History
+Date            Authors Name        Brief Description of Change
+18-11-2021      Sathvik Voola       Initial Draft
+06-12-2021		Sathvik Voola		Behaviour of the lightning path
+-->
+<aura:component implements="flexipage:availableForRecordHome,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,force:hasRecordId,force:hasSObjectName" access="global" controller="CustomPickListValues_CC">
+    <aura:attribute name="strCurrentObjPickVal" type="String" />
+    <aura:attribute name="sObjectName" type="String" />
+    <aura:attribute name="objWrappedPathValues" type="Object[]" />
+    <aura:attribute name="hardStopList" type="Object[]" />
+    <aura:attribute name="currentStep" type="String" />
+    <aura:attribute name="strSelectedPathVal" type="String" />
+    <aura:attribute name="numCurrentIndex" type="Integer" />
+    <aura:attribute name="isComplete" type="Boolean" default="true"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+    
+    
+    <lightning:card>
+        
+        <div class="slds-path">
+            <div class="slds-grid slds-path__track">
+                <div class="slds-grid slds-path__scroller-container">
+                    <div class="slds-path__scroller">
+                        <div class="slds-path__scroller_inner">
+                            <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
+                                 
+                                <aura:iteration items="{!v.objWrappedPathValues}" var="item" indexVar="index">
+                                    
+                                    <li class="{!'slds-path__item '+item.strActive}" role="presentation"  >
+                                        
+                                        <a   
+                                           class="slds-path__link " title="{!item.strPickValue}"
+                                           role="option" tabindex="-1"  onclick="{!c.handlePathClick}" data-index="{!index}">
+                                            <span class="slds-path__stage" data-index="{!index}" style="margin-left:50px;">
+                                            
+                                            </span> 
+                                        
+                                            <span  data-index="{!index}">
+                                                {!item.strPickValue} &nbsp;<aura:if isTrue="{!item.isCheck}"><lightning:icon size="x-small" iconName="utility:check" class="slds-icon slds-icon_x-small IconColor" /></aura:if>
+                                                 <aura:if isTrue="{!item.isHardStop}"><lightning:icon size="x-small" iconName="utility:lock" class="slds-icon  slds-icon_x-small IconColor" /></aura:if>  
+     
+                                               
+                                            </span>
+                                            
+                                        </a>
+                                       
+                                    </li>
+                                        
+                                </aura:iteration>
+                                
+                                
+                            </ul>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <c:setUpPageAccordionCloneAle strPathName="{!v.strSelectedPathVal}" onsectionvaluechange="{!c.getSectionState}"  onhardstopeventvaluechanges="{!c.getHardStop}"/>
+        
+  
+    </lightning:card>
+</aura:component>

@@ -1,0 +1,51 @@
+/*.IconColor  svg{
+    fill : white;
+}
+
+.slds-path__nav .slds-is-active{
+    background :none !important;
+}
+.slds-path__nav .Test:before {
+    background-color: green !important; 
+}
+.slds-path__nav .Test:after {
+    background-color: green !important; 
+}
+.slds-path__nav .Test .slds-path__link {
+    color: white !important;
+}
+.slds-path__nav .HardStop:before {
+    background-color: red !important;
+    pointer-events: none !important;
+}
+.slds-path__nav .HardStop:after {
+    background-color: red !important; 
+    pointer-events: none !important;
+}
+.slds-path__nav .HardStop .slds-path__link {
+    color: white !important;
+    pointer-events: none !important;
+}*/
+
+
+/*.slds-path__item:last-child{
+	border-top-right-radius: var(--lwc-heightSalesPath,2rem);
+	border-bottom-right-radius: var(--lwc-heightSalesPath,2rem);
+}*/
+.IconColor  svg{
+    fill : white;
+}
+
+.slds-path__nav .Test:before {
+    background-color: green !important; 
+}
+.slds-path__nav .Test:after {
+    background-color: green !important; 
+}
+.slds-path__nav .Test .slds-path__link {
+    color: white !important;
+}
+.slds-path__nav .slds-is-lost .slds-path__link {
+    color: white !important;
+    pointer-events: none !important;
+}
