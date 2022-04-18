@@ -1,0 +1,727 @@
+<!--
+Author: Darshan S Almiya
+Company: Coforge
+Description: Rendering of questions based on Sales path and sections
+Attributes: Sales path and Section name
+objectType – Questionnaire
+
+Event Handlers: getQuestionnaire - to get list of questions
+                handleRadioSelection- to handle radio button events
+                getNegativeAnswerForRadio - to get negative answer for selected question for hardstop message.
+
+History
+Date            Authors Name           Brief Description of Change
+16-11-2021      Darshan S Almiya       Initial Draft
+-->
+<template>
+    <div class="slds-var-m-around_small">
+        <template if:true={lstquestionnaire}>
+            <div class="slds-grid slds-wrap">
+                <template if:true={isProduceESIS}>
+                    <lightning-button name="button" class="cstm-btn slds-float_right button slds-p-left_small"
+                        label="Produce ESIS" variant="Destructive" onclick={handleESISButtonClicked}>
+                    </lightning-button>
+                    <template if:true={lstApplicantDetails}>
+                        <div class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_3-of-3"
+                            key={item}>
+                            <c-questionnaire-additional-question-cmp show-esis={showESISAdditionalComp}
+                                lstapplicant={lstApplicantDetails} str-section-name={strSectionName}
+                                onposesisfilledevent={handlePOSEISFilledAction}>
+                            </c-questionnaire-additional-question-cmp>
+                        </div>
+                    </template>
+                </template>
+                <template if:true={isProductFeeHyperLink}>
+                    <template if:true={hyperLink}>
+                        <div class="hyperLinkColor">
+                            <a style="color: red;" onclick={handleHyperLink}>
+                                {label.NoProdductSelectedWarningMessageLabel} </a>
+
+                        </div>
+                    </template>
+                </template>
+                <template if:true={isIncomeSec}>
+
+
+                    <template if:true={isIncome} onchange={test}>
+
+                        <template for:each={lstIncomeCount} for:item="item" for:index="index">
+                            <div class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_3-of-3"
+                                key={item}>
+                                <c-questionnaire-additional-question-cmp lst-add-questions={lstIncomeQuestions}
+                                    is-income-true={isIncome} ontotalamount={fetchTotalAmountValue}
+                                    onincomevaluechange={handleIncomeChange} ondeleterow={handleDeleteIncomeRow}
+                                    inc-index={index} inc-item={item} lst-income-pick-values={lstIncomeSOurceOptions}
+                                    lst-specific-income-pick-value={lstSpecificIncomeSourceOptions}
+                                    str-used-spec-inc-vals={strStringifiedIncomeUsedValues}>
+                                </c-questionnaire-additional-question-cmp>
+                            </div>
+                        </template>
+                        <div
+                            class="slds-col slds-size_1-of-1 slds-var-p-right_medium slds-var-p-left_small slds-p-bottom_small">
+                            <lightning-button variant="destructive" label="Add income source" onclick={handleAddIncome}
+                                class="slds-m-left_x-small"></lightning-button>
+                        </div>
+                    </template>
+                </template>
+                <template for:each={lstquestionnaire} for:item="questionnaire" for:index="index">
+                    <div key={questionnaire.strRecordId} class="slds-col slds-size_3-of-3">
+                        <template if:false={questionnaire.isDynamic}>
+                            <template if:true={questionnaire.strSubSectionName}>
+                                <template if:true={questionnaire.IsLine}>
+                                    <div class="slds-border_bottom "></div><br />
+                                </template>
+                                <label
+                                    class="slds-form-element__label slds-p-left_small"><b>{questionnaire.strSubSectionName}</b></label>
+                                <template if:true={questionnaire.strSubSectionHelpText}>
+                                    <lightning-helptext content={questionnaire.strSubSectionHelpText}>
+                                    </lightning-helptext>
+                                </template>
+                            </template>
+                             <template if:false={questionnaire.isDynamic}>
+                                <!--For Combobox Types Questions-->
+                                <template if:true={questionnaire.isComboBox}>
+                                    <div class="slds-p-left_small slds-p-right_small slds-col slds-size_2-of-3">
+                                        <label
+                                            class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                        <template if:true={questionnaire.isHelp}>
+                                            <lightning-helptext content={questionnaire.strHelpText}>
+                                            </lightning-helptext>
+                                        </template>
+                                        <template if:true={questionnaire.isHelpIcon}>
+                                            <lightning-icon icon-name="utility:info" size="xx-small"
+                                                onmouseover={showPopover} aria-haspopup={isShowPopover}>
+                                            </lightning-icon>
+                                            <template if:true={isShowPopover}>
+                                                <section aria-label="Dialog title" aria-describedby="popover-body-id"
+                                                    class="slds-popover slds-popover_tooltip  " role="tooltip"
+                                                    style="position:absolute; height:250px;  ">
+                                                    <button
+                                                        class="slds-button slds-button_icon slds-button_icon slds-button_icon-small slds-float_right slds-popover__close"
+                                                        title="Close dialog" style=" padding-left:250px;  "
+                                                        onclick={hidePopover}>
+                                                        <lightning-icon icon-name="utility:close"
+                                                            style="  margin-left: -10px;float:right" size="xx-small">
+                                                        </lightning-icon>
+                                                        <span class="slds-assistive-text ">Close dialog</span>
+                                                    </button>
+                                                    <div class="slds-popover__body tooltipstyle">
+                                                        <lightning-formatted-rich-text style="white-space: normal; "
+                                                            value={questionnaire.strHelpHyperLink}>
+                                                        </lightning-formatted-rich-text>
+                                                    </div>
+                                                </section>
+
+                                            </template>
+                                        </template>
+
+
+
+                                    </div>
+                                    <div class="slds-p-left_small slds-p-bottom_small slds-col slds-size_1-of-3">
+                                        <lightning-combobox name={questionnaire.strRecordId}
+                                            data-id={questionnaire.strRecordId} data-index={index}
+                                            variant="label-hidden" label={questionnaire.strInternalUIText}
+                                            value={questionnaire.strSelectedValue} placeholder=""
+                                            options={questionnaire.lstOptions} onchange={handleComboBox}>
+                                        </lightning-combobox>
+                                        <template if:true={questionnaire.isError}>
+                                            <p class='errorClass slds-wrap'>{questionnaire.strErrorMessage}</p>
+                                        </template>
+                                        
+                                        <template if:true={questionnaire.isSecondError}>
+                                            <p class='errorClass slds-wrap'>
+                                                {questionnaire.strSecondError}</p>
+                                        </template>
+                                    </div>
+                                    <template if:true={questionnaire.isDynamicFieldShow}>
+                                        <div
+                                            class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_3-of-3">
+                                            <c-addtional-qn-a-display-cmp-risk-call1
+                                                lst-add-questions={lstAddtionalQuestionnaire}
+                                                loan-part-count={loanPartCount}
+                                                onadditionaldynamicvalidator={handleAddDynamicValidation}>
+                                            </c-addtional-qn-a-display-cmp-risk-call1>
+                                        </div>
+                                    </template>
+                                </template>
+                                <!--ForCheckbox Types Questions-->
+                                <template if:true={questionnaire.isCheckBox}>
+                                    <div class="slds-p-left_small slds-p-right_small slds-col slds-size_2-of-3">
+                                        <label
+                                            class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                        <template if:true={questionnaire.isHelp}>
+                                            <lightning-helptext content={questionnaire.strHelpText}>
+                                            </lightning-helptext>
+                                        </template>
+                                    </div>
+                                    <div class="slds-p-left_small slds-p-bottom_small slds-col slds-size_1-of-3">
+                                        <lightning-checkbox-group type="checkbox" name={questionnaire.strRecordId}
+                                            options={questionnaire.lstOptions} data-id={questionnaire.strRecordId}
+                                            data-index={index} variant="label-hidden"
+                                            label={questionnaire.strInternalUIText} value=''
+                                            onchange={handleCheckBoxInput}></lightning-checkbox-group>
+                                        <template if:true={questionnaire.isError}>
+                                            <p class='errorClass slds-wrap'>{questionnaire.strErrorMessage}</p>
+                                        </template>
+                                        
+                                    </div>
+                                </template>
+
+                                <!--For Text Areas Types Questions-->
+                                <template if:true={questionnaire.isTextArea}>
+                                    <div
+                                        class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_2-of-3">
+                                        <label
+                                            class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                        <template if:true={questionnaire.isHelp}>
+                                            <lightning-helptext content={questionnaire.strHelpText}>
+                                            </lightning-helptext>
+                                        </template>
+                                        <lightning-textarea style="width:150%" type="text"
+                                            name={questionnaire.strFieldName} data-id={questionnaire.strRecordId}
+                                            data-index={index} variant="label-hidden"
+                                            label={questionnaire.strInternalUIText} onchange={handleText}>
+                                        </lightning-textarea>
+                                        <template if:true={questionnaire.isError}>
+                                            <p class='errorClass slds-wrap'>{questionnaire.strErrorMessage}</p>
+                                        </template>
+                                        
+                                    </div>
+                                </template>
+
+                                <!--For Text Types Questions-->
+                                <template if:true={questionnaire.isText}>
+                                    <template if:false={questionnaire.isTextBoxSizeReduce}>
+
+                                        <div id={questionnaire.strRecordId}
+                                            class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_2-of-3 ">
+                                            <label
+                                                class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                            <template if:true={questionnaire.isHelp}>
+                                                <lightning-helptext content={questionnaire.strHelpText}>
+                                                </lightning-helptext>
+                                            </template>
+                                            <lightning-input type="text" name={questionnaire.strFieldName}
+                                                data-id={questionnaire.strRecordId} data-index={index}
+                                                variant="label-hidden" label={questionnaire.strInternalUIText}
+                                                onchange={handleText} value={questionnaire.strDefaultText}
+                                                disabled={questionnaire.isDisabled}
+                                                max-length={questionnaire.intMaxLength} onfocusout={handleSortCode}>
+                                            </lightning-input>
+
+                                            <template if:true={questionnaire.isError}>
+                                                <p class='errorClass'>
+                                                    {questionnaire.strErrorMessage}</p>
+                                            </template>
+                                            
+                                        </div>
+                                    </template>
+
+                                    <template if:true={questionnaire.isTextBoxSizeReduce}>
+
+                                        <div id={questionnaire.strRecordId}
+                                            class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_1-of-3 ">
+                                            <label
+                                                class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                            <template if:true={questionnaire.isHelp}>
+                                                <lightning-helptext content={questionnaire.strHelpText}>
+                                                </lightning-helptext>
+                                            </template>
+                                            <lightning-input type="text" name={questionnaire.strFieldName}
+                                                max-length={questionnaire.intMaxLength}
+                                                data-id={questionnaire.strRecordId} data-index={index}
+                                                variant="label-hidden" label={questionnaire.strInternalUIText}
+                                                onchange={handleText} value={questionnaire.strDefaultText}>
+                                            </lightning-input>
+                                        </div>
+                                        <template if:true={questionnaire.isYearConstructionError}>
+                                            <p class='errorClass slds-p-left_small slds-p-bottom_small yearErrorClass'>
+                                                {questionnaire.strErrorMessage}</p>
+                                        </template>
+                                    </template>
+                                </template>
+                                <!-- <template if:true={hyperLink}>
+                                        <a href=""> {label.NoProdductSelectedWarningMessageLabel} </a>
+                                        <p>
+                                            <lightning-formatted-url target="_blank"></lightning-formatted-url>
+                                        </p>
+                                    </template> -->
+                                <!--For Outputfield Type Questions-->
+                                <template if:false={ProductFeeHide}>
+                                    <template if:true={questionnaire.isOutputfield}>
+
+                                        <div
+                                            class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_1-of-3">
+
+                                            <label
+                                                class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                             <p class=" slds-p-top_small slds-border_bottom ">
+                                                {questionnaire.strDefaultText}</p>
+                                            <!-- </div> -->
+                                        </div>
+                                    </template>
+                                </template>
+
+                                <!--For Currency Types Questions-->
+                                <template if:false={ProductFeeHide}>
+                                    <template if:true={questionnaire.isCurrency}>
+                                        <template if:false={questionnaire.strSubSectionName}>
+                                            <template if:true={questionnaire.IsLine}>
+                                                <!-- <hr size="1" color="white" class="slds-p-bottom_x-small"> -->
+                                                <div class="slds-p-top_small slds-border_bottom "></div><br />
+
+                                                <label
+                                                    class="slds-form-element__label slds-p-left_small">{questionnaire.strInternalUIText}</label>
+                                                <template if:true={questionnaire.isHelp}>
+                                                    <lightning-helptext content={questionnaire.strHelpText}>
+                                                    </lightning-helptext>
+                                                </template>
+                                            </template>
+
+                                        </template>
+
+                                        <div class="slds-p-left_small slds-p-right_small slds-col slds-size_2-of-3">
+                                            <template if:false={questionnaire.IsLine}>
+                                                <label
+                                                    class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                                <template if:true={questionnaire.isHelp}>
+                                                    <lightning-helptext content={questionnaire.strHelpText}>
+                                                    </lightning-helptext>
+                                                </template>
+                                            </template>
+                                        </div>
+                                        <div class="slds-p-left_small slds-p-bottom_small slds-col slds-size_1-of-3">
+
+
+                                            <lightning-input type="number" formatter="currency"
+                                                name={questionnaire.strFieldName} data-id={questionnaire.strRecordId}
+                                                data-index={index} variant="label-hidden"
+                                                value={questionnaire.strDefaultText} disabled={questionnaire.isDisabled}
+                                                label={questionnaire.strInternalUIText} onchange={handleIntegerInput}
+                                                onfocusout={handlecurrency} autocomplete="off">
+                                            </lightning-input>
+
+                                        </div>
+
+                                        <template if:true={questionnaire.isError}>
+                                            <p class='errorClass slds-p-left_small slds-p-bottom_small slds-wrap'>
+                                                {questionnaire.strErrorMessage}</p>
+                                        </template>
+                                        
+                                        <template if:true={questionnaire.isSecondError}>
+                                            <p class='errorClass slds-p-left_small slds-p-bottom_small slds-wrap'>
+                                                {questionnaire.strSecondError}</p>
+                                        </template>
+                                    </template>
+                                </template>
+
+
+                                <!--For Number Types Questions-->
+                                <template if:true={questionnaire.isNumber}>
+                                    <div class="slds-p-left_small slds-p-right_small slds-col slds-size_2-of-3">
+                                        <label
+                                            class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                        <template if:true={questionnaire.isHelp}>
+                                            <lightning-helptext content={questionnaire.strHelpText}>
+                                            </lightning-helptext>
+                                        </template>
+                                    </div>
+                                    <div class="slds-p-left_small slds-p-bottom_small slds-col slds-size_1-of-3">
+                                        <lightning-input type="number" name={questionnaire.strFieldName}
+                                            data-id={questionnaire.strRecordId} data-index={index}
+                                            variant="label-hidden" label={questionnaire.strInternalUIText}
+                                            onchange={handleIntegerInput}></lightning-input>
+                                        <template if:true={questionnaire.isError}>
+                                            <p class='errorClass slds-wrap'>{questionnaire.strErrorMessage}</p>
+                                        </template>
+                                        
+                                    </div>
+                                </template>
+
+                                <!--For Date Types Questions-->
+                                <template if:true={questionnaire.isDate}>
+                                    <div
+                                        class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_1-of-3">
+                                        <label
+                                            class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                        <template if:true={questionnaire.isHelp}>
+                                            <lightning-helptext content={questionnaire.strHelpText}>
+                                            </lightning-helptext>
+                                        </template>
+                                        <lightning-input type="date" name={questionnaire.strFieldName}
+                                            data-id={questionnaire.strRecordId} data-index={index}
+                                            variant="label-hidden" label={questionnaire.strInternalUIText}
+                                            onchange={handleDate}></lightning-input>
+
+                                        <template if:true={questionnaire.isError}>
+                                            <p class='errorClass slds-wrap '>
+                                                {questionnaire.strErrorMessage}</p>
+                                        </template>
+                                        
+                                        <template if:true={questionnaire.isSecondError}>
+                                            <p class='errorClass slds-wrap '>
+                                                {questionnaire.strSecondError}</p>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <!--For Radio Types Questions-->
+                                <template if:true={questionnaire.isRadio}>
+                                    <div
+                                        class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_3-of-3">
+                                        <label
+                                            class="slds-form-element__label slds-cell-wrap">{questionnaire.strInternalUIText}</label>
+                                        <template if:true={questionnaire.isHelp}>
+                                            <lightning-helptext content={questionnaire.strHelpText}>
+                                            </lightning-helptext>
+                                        </template>
+                                        <lightning-radio-group name={questionnaire.strRecordId}
+                                            data-id={questionnaire.strRecordId} data-index={index}
+                                            variant="label-hidden" label={questionnaire.strInternalUIText}
+                                            field-level-help={questionnaire.strHelpText}
+                                            options={questionnaire.lstOptions} value='' onchange={handleRadioSelection}
+                                            type="radio">
+                                        </lightning-radio-group>
+                                        <template if:true={questionnaire.isError}>
+                                            <p class='errorClass'>{questionnaire.strErrorMessage}</p>
+                                        </template>
+                                        
+                                    </div>
+                                </template>
+                            </template>
+                            <!-- </template> -->
+                        </template>
+
+                        <!--For Dynamic Questions-->
+                        <template if:true={questionnaire.isDynamic}>
+                            <template if:false={questionnaire.isDyanmicLogicNeeded}>
+                                <template if:true={questionnaire.isDynamicFieldShow}>
+                                    <template if:true={questionnaire.strSubSectionName}>
+                                        <template if:true={questionnaire.IsLine}>
+                                            <!-- <hr size="1" color="white" class="slds-p-bottom_x-small"> -->
+                                            <div class="slds-border_bottom "></div><br />
+                                        </template>
+                                        <label
+                                            class="slds-form-element__label slds-p-left_small"><b>{questionnaire.strSubSectionName}</b></label>
+                                        <template if:true={questionnaire.strSubSectionHelpText}>
+                                            <lightning-helptext content={questionnaire.strSubSectionHelpText}>
+                                            </lightning-helptext>
+                                        </template>
+
+                                    </template>
+
+
+                                    <template if:true={questionnaire.isComboBox}>
+                                        <div class="slds-p-left_small slds-p-right_small slds-col slds-size_2-of-3">
+                                            <label
+                                                class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                            <template if:true={questionnaire.isHelp}>
+                                                <lightning-helptext content={questionnaire.strHelpText}>
+                                                </lightning-helptext>
+                                            </template>
+                                        </div>
+                                        <div class="slds-p-left_small slds-p-bottom_small slds-col slds-size_1-of-3">
+                                            <lightning-combobox name={questionnaire.strRecordId}
+                                                data-id={questionnaire.strRecordId} data-index={index}
+                                                variant="label-hidden" label={questionnaire.strInternalUIText}
+                                                value={questionnaire.strSelectedValue} placeholder=""
+                                                options={questionnaire.lstOptions} onchange={handleComboBox}>
+                                            </lightning-combobox>
+                                            <template if:true={questionnaire.isError}>
+                                                <p class='errorClass slds-wrap'>{questionnaire.strErrorMessage}</p>
+                                            </template>
+                                            
+                                            <template if:true={questionnaire.isSecondError}>
+                                                <p class='errorClass slds-wrap'>
+                                                    {questionnaire.strSecondError}</p>
+                                            </template>
+                                        </div>
+                                        <!-- <div class="slds-p-right_small slds-p-bottom_small slds-col slds-size_3-of-3"></div> -->
+                                        <!--slds-p-left_small-->
+                                        <template if:true={noOfAgesCount}>
+                                            <c-addtional-qn-a-display-cmp-risk-call1
+                                                lst-add-questions={lstAddtionalQuestionnaire} ages-count={noOfAgesCount}
+                                                onadditionaldynamicvalidator={handleAddDynamicValidation}>
+                                            </c-addtional-qn-a-display-cmp-risk-call1>
+                                        </template>
+                                        <!-- </div> -->
+                                    </template>
+                                    <!--ForCheckbox Types Questions-->
+                                    <template if:true={questionnaire.isCheckBox}>
+                                        <div class="slds-p-left_small slds-p-right_small slds-col slds-size_2-of-3">
+                                            <label
+                                                class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                            <template if:true={questionnaire.isHelp}>
+                                                <lightning-helptext content={questionnaire.strHelpText}>
+                                                </lightning-helptext>
+                                            </template>
+                                        </div>
+                                        <div class="slds-p-left_small slds-p-bottom_small slds-col slds-size_1-of-3">
+                                            <lightning-checkbox-group type="checkbox" name={questionnaire.strRecordId}
+                                                options={questionnaire.lstOptions} data-id={questionnaire.strRecordId}
+                                                data-index={index} variant="label-hidden"
+                                                label={questionnaire.strInternalUIText} value=''
+                                                onchange={handleCheckBoxInput}></lightning-checkbox-group>
+                                            <template if:true={questionnaire.isError}>
+                                                <p class='errorClass slds-wrap'>{questionnaire.strErrorMessage}</p>
+                                            </template>
+                                            
+                                        </div>
+                                    </template>
+
+                                    <template if:true={questionnaire.isTextArea}>
+                                        <div
+                                            class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_2-of-3">
+                                            <label
+                                                class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                            <template if:true={questionnaire.isHelp}>
+                                                <lightning-helptext content={questionnaire.strHelpText}>
+                                                </lightning-helptext>
+                                            </template>
+                                            <lightning-textarea style="width:150%" type="text"
+                                                name={questionnaire.strFieldName} data-id={questionnaire.strRecordId}
+                                                data-index={index} variant="label-hidden"
+                                                label={questionnaire.strInternalUIText} onchange={handleText}>
+                                            </lightning-textarea>
+                                        </div>
+                                    </template>
+
+                                    <template if:true={questionnaire.isText}>
+                                        <template if:false={questionnaire.isTextBoxSizeReduce}>
+                                            <div id={questionnaire.strRecordId}
+                                                class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_2-of-3">
+                                                <label
+                                                    class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                                <template if:true={questionnaire.isHelp}>
+                                                    <lightning-helptext content={questionnaire.strHelpText}>
+                                                    </lightning-helptext>
+                                                </template>
+                                                <lightning-input type="text" name={questionnaire.strFieldName}
+                                                    data-id={questionnaire.strRecordId} data-index={index}
+                                                    variant="label-hidden" label={questionnaire.strInternalUIText}
+                                                    onchange={handleText} value={questionnaire.strDefaultText}
+                                                    disabled={questionnaire.isDisabled}
+                                                    max-length={questionnaire.intMaxLength}>
+                                                </lightning-input>
+
+
+                                                <template if:true={questionnaire.isError}>
+                                                    <p
+                                                        class='errorClass'>
+                                                        {questionnaire.strErrorMessage}</p>
+                                                </template>
+                                                <template if:true={questionnaire.isWarning}>
+                                                    <p
+                                                        class='errorClass'>
+                                                        {questionnaire.strErrorMessage}</p>
+
+                                                </template>
+                                                
+                                            </div>
+                                        </template>
+
+                                        <template if:true={questionnaire.isTextBoxSizeReduce}>
+                                            <div id={questionnaire.strRecordId}
+                                                class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_1-of-3 ">
+                                                <label
+                                                    class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                                <template if:true={questionnaire.isHelp}>
+                                                    <lightning-helptext content={questionnaire.strHelpText}>
+                                                    </lightning-helptext>
+                                                </template>
+                                                <lightning-input type="text" name={questionnaire.strFieldName}
+                                                    max-length={questionnaire.intMaxLength}
+                                                    data-id={questionnaire.strRecordId} data-index={index}
+                                                    variant="label-hidden" label={questionnaire.strInternalUIText}
+                                                    onchange={handleText} value={questionnaire.strDefaultText}>
+                                                </lightning-input>
+                                                <template if:true={questionnaire.isError}>
+                                                    <p
+                                                        class='errorClass slds-p-left_small slds-p-bottom_small slds-wrap'>
+                                                        {questionnaire.strErrorMessage}</p>
+                                                </template>
+                                                
+                                            </div>
+                                        </template>
+                                    </template>
+
+
+
+                                    <template if:true={questionnaire.isCurrency}>
+                                        <div class="slds-p-left_small slds-p-right_small slds-col slds-size_2-of-3">
+                                            <label
+                                                class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                            <template if:true={questionnaire.isHelp}>
+                                                <lightning-helptext content={questionnaire.strHelpText}>
+                                                </lightning-helptext>
+                                            </template>
+                                        </div>
+                                        <div class="slds-p-left_small slds-p-bottom_small slds-col slds-size_1-of-3">
+                                            <lightning-input type="number" formatter="currency"
+                                                name={questionnaire.strFieldName} data-id={questionnaire.strRecordId}
+                                                data-index={index} variant="label-hidden"
+                                                value={questionnaire.strDefaultText} onchange={handleIntegerInput}
+                                                label={questionnaire.strInternalUIText} autocomplete="off">
+                                            </lightning-input>
+
+                                        </div>
+                                        <template if:true={questionnaire.isError}>
+                                            <p class='errorClass slds-p-left_small slds-p-bottom_small slds-wrap'>
+                                                {questionnaire.strErrorMessage}</p>
+                                        </template>
+                                        
+                                        <template if:true={questionnaire.isSecondError}>
+                                            <p class='errorClass slds-p-left_small slds-p-bottom_small slds-wrap'>
+                                                {questionnaire.strSecondError}</p>
+                                        </template>
+                                    </template>
+
+                                    <template if:true={questionnaire.isNumber}>
+                                        <div class="slds-p-left_small slds-p-right_small slds-col slds-size_2-of-3">
+                                            <label
+                                                class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                            <template if:true={questionnaire.isHelp}>
+                                                <lightning-helptext content={questionnaire.strHelpText}>
+                                                </lightning-helptext>
+                                            </template>
+                                        </div>
+                                        <div class="slds-p-left_small slds-p-bottom_small slds-col slds-size_1-of-3">
+                                            <lightning-input type="number" name={questionnaire.strFieldName}
+                                                data-id={questionnaire.strRecordId} data-index={index}
+                                                variant="label-hidden" label={questionnaire.strInternalUIText}
+                                                value={questionnaire.strDefaultText} disabled={questionnaire.isDisabled}
+                                                onchange={handleIntegerInput}>
+                                            </lightning-input>
+                                        </div>
+                                        <template if:true={questionnaire.isDynamicLogicFieldShow}>
+                                            <div
+                                                class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_3-of-3">
+                                                <c-questionnaire-additional-question-cmp
+                                                    lst-add-questions={lstAddtionalQuestionnaire}
+                                                    int-let-property-count={letPropertyCount}
+                                                    onloanvaluechange={handleLoanChange} lst-unique-ids={lstUniqueIds}>
+                                                </c-questionnaire-additional-question-cmp>
+                                            </div>
+                                        </template>
+                                    </template>
+                                    <template if:true={questionnaire.isOutputfield}>
+
+                                        <div
+                                            class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_1-of-3">
+
+                                            <label
+                                                class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+
+
+                                            <!-- <div  field-name ={questionnaire.strDefaultText}
+                                              name={questionnaire.strFieldName} data-id={questionnaire.strRecordId}
+                                              data-index={index} variant="label-hidden"
+                                              value ={questionnaire.strDefaultText}
+                                              label={questionnaire.strInternalUIText} onchange={handleIntegerInput}
+                                              onfocusout={handlecurrency} autocomplete="off"> -->
+                                            <p class=" slds-p-top_small slds-border_bottom">
+                                                {questionnaire.strDefaultText}</p>
+                                            <!-- </div> -->
+                                        </div>
+                                    </template>
+
+                                    <template if:true={questionnaire.isDate}>
+                                        <div
+                                            class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_2-of-3">
+                                            <label
+                                                class="slds-form-element__label">{questionnaire.strInternalUIText}</label>
+                                            <template if:true={questionnaire.isHelp}>
+                                                <lightning-helptext content={questionnaire.strHelpText}>
+                                                </lightning-helptext>
+                                            </template>
+                                            <lightning-input type="date" name={questionnaire.strFieldName}
+                                                data-id={questionnaire.strRecordId} data-index={index}
+                                                variant="label-hidden" label={questionnaire.strInternalUIText}
+                                                onchange={handleDate}>
+                                            </lightning-input>
+
+                                            <template if:true={questionnaire.isError}>
+                                                <p class='errorClass slds-wrap '>
+                                                    {questionnaire.strErrorMessage}</p>
+                                            </template>
+                                            
+                                            <template if:true={questionnaire.isSecondError}>
+                                                <p class='errorClass slds-wrap '>
+                                                    {questionnaire.strSecondError}</p>
+                                            </template>
+                                        </div>
+                                    </template>
+
+                                    <template if:true={questionnaire.isRadio}>
+                                        <div
+                                            class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_3-of-3">
+                                            <label
+                                                class="slds-form-element__label slds-cell-wrap">{questionnaire.strInternalUIText}</label>
+                                            <template if:true={questionnaire.isHelp}>
+                                                <lightning-helptext content={questionnaire.strHelpText}>
+                                                </lightning-helptext>
+                                            </template>
+                                            <lightning-radio-group name={questionnaire.strFieldName}
+                                                data-id={questionnaire.strRecordId} data-index={index}
+                                                variant="label-hidden" label={questionnaire.strInternalUIText}
+                                                field-level-help={questionnaire.strHelpText}
+                                                options={questionnaire.lstOptions} value=''
+                                                onchange={handleRadioSelection} type="radio">
+                                            </lightning-radio-group>
+                                            <template if:true={questionnaire.isError}>
+                                                <p class='errorClass'>{questionnaire.strErrorMessage}</p>
+                                            </template>
+                                        </div>
+                                        <div class="slds-p-right_small slds-p-bottom_small slds-col slds-size_3-of-3">
+                                            <template if:true={questionnaire.isDynamicLogicFieldShow}>
+                                                <div
+                                                    class="slds-p-left_small slds-p-right_small slds-p-bottom_small slds-col slds-size_3-of-3">
+                                                    <c-questionnaire-additional-question-cmp
+                                                        lst-add-questions={lstAddtionalQuestionnaire}
+                                                        is-joint={isAdditionalCmpVisible}>
+                                                    </c-questionnaire-additional-question-cmp>
+
+                                                </div>
+                                            </template>
+                                        </div>
+
+                                    </template>
+                                </template>
+                            </template>
+                        </template>
+                    </div>
+                </template>
+
+                <template if:true={isCreditCheck}>
+                    <lightning-button name="button" disabled="true"
+                        class="cstm-btn slds-float_right button slds-p-left_small" label="Credit Check"
+                        variant="Destructive" onclick={handleButtonClick}>
+                    </lightning-button>
+                </template>
+                <template if:true={isModalOpen}>
+                    <c-generic-modal-popup modal-label="Credit Check" is-show-modal=true onmodalcallback={modalCallBack}
+                        list-button={jsonButton}
+                        modal-subject="Are you sure you want to credit check the Application ?">
+                    </c-generic-modal-popup>
+                </template>
+
+                <!-- Added by DS 692-->
+                <!-- Procut Section (Mortageg Deal.Prodcut Selection-->
+                <div class="slds-col slds-size_1-of-1 slds-m-top_none">
+                    <div class="slds-m-top_large">
+                        <template if:true={isProductSelection}>
+                            <c-questionnaire-additional-question-cmp lst-add-questions={lstAddtionalQuestionnaire}
+                                is-product-selection={isProductSelection} onproductselect={handleProdSelect}
+                                onproductclear={handleProductClear}>
+                            </c-questionnaire-additional-question-cmp>
+                        </template>
+                    </div>
+                </div>
+
+
+            </div>
+        </template>
+
+    </div>
+</template>

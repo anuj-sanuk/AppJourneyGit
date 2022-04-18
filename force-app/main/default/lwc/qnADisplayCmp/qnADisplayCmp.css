@@ -1,0 +1,28 @@
+/*adjusting help text position*/
+.this.customIcon {
+    vertical-align: top !important;
+}
+ 
+.customIcon {
+    vertical-align: top !important;
+}
+
+.errorClass{
+    color:red;
+    white-space: pre;
+    overflow-wrap: break-word;
+}
+.inputWidth{
+    width: 25%;
+}
+
+.slds-show{
+    display: none;
+}
+.tooltipstyle{
+    width:250px;
+    height:100px;
+    position:absolute;
+    color:white;
+
+}
